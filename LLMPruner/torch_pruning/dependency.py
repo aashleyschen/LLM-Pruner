@@ -692,6 +692,8 @@ class DependencyGraph(object):
 
         module2node = {}
         for o in utils.flatten_as_list(out):
+            if not hasattr(o, "grad_fn"):
+                continue
             self._trace_computational_graph(
                 module2node, o.grad_fn, gradfn2module, reused)
 
@@ -1084,9 +1086,5 @@ class DependencyGraph(object):
                 if n == node_2:
                     return node_1.module.split_sizes[i]
         return self._infer_out_channels_recursively(node_1)
-
-        
-
-
 
         
