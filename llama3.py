@@ -65,7 +65,7 @@ def main(args):
                 result = tokenizer.decode(generation_output[0])
                 logger.log(result)
     
-        ppl = PPLMetric(model, tokenizer, ['wikitext2', 'ptb'], args.max_seq_len, device=args.eval_device)
+        ppl = PPLMetric(model, tokenizer, ['wikitext2'], args.max_seq_len, device=args.eval_device)
         logger.log("PPL before pruning: {}".format(ppl))
 
     model.to(args.device)
@@ -128,7 +128,7 @@ def main(args):
         for i in range(args.iterative_steps):
 
             if pruner_type in ['taylor']:
-                example_prompts = get_examples('bookcorpus', tokenizer, args.num_examples, seq_len = 64).to(args.device)
+                example_prompts = get_examples('wikitext2', tokenizer, args.num_examples, seq_len = 64).to(args.device)
                 logger.log("Start Backwarding in iterative steps = {}...".format(i))
                 if args.taylor in ['param_mix', 'param_second']:
                     for j in range(args.num_examples):
@@ -200,7 +200,7 @@ def main(args):
         for i in range(args.iterative_steps):
 
             if pruner_type in ['taylor']:
-                example_prompts = get_examples('bookcorpus', tokenizer, 10, seq_len = 64)
+                example_prompts = get_examples('wikitext2', tokenizer, 10, seq_len = 64)
                 logger.log("Start Backwarding in iterative steps = {}...".format(i))
                 loss = model(example_prompts, labels=example_prompts).loss
                 logger.log("Loss = {}".format(loss))
@@ -271,7 +271,7 @@ def main(args):
         
         logger.log("\n==================Finish================\n")
     
-    ppl = PPLMetric(model, tokenizer, ['wikitext2', 'ptb'], args.max_seq_len, device=args.eval_device)
+    ppl = PPLMetric(model, tokenizer, ['wikitext2'], args.max_seq_len, device=args.eval_device)
     logger.log("PPL after pruning: {}".format(ppl))
     logger.log("Memory Requirement: {} MiB\n".format(torch.cuda.memory_allocated()/1024/1024))
 
@@ -319,3 +319,6 @@ if __name__ == "__main__":
     torch_version = float('.'.join(torch.__version__.split('.')[:2]))
     args.torch_version = torch_version
     main(args)
+
+
+
