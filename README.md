@@ -106,7 +106,25 @@ bash script/llama_prune.sh
 ```
 This script would compress the LLaMA-7B model with ～20\% parameters pruned. All the pre-trained models and the dataset would be automatically downloaded, so you do not need to manually download the resource. When running this script for the first time, it will require some time to download the model and the dataset.
 
-    
+### Steps for Llama-3-8B-Instruct
+```bash
+huggingface-cli login 
+```
+#### Pruning for Google Colab Limited Resources
+```bash
+python llama3.py --pruning_ratio 0.25 \
+                 --device cuda --eval_device cuda \
+                 --base_model meta-llama/Meta-Llama-3-8B-Instruct \
+                 --block_wise --block_mlp_layer_start 8 --block_mlp_layer_end 26 \
+                 --block_attention_layer_start 8 --block_attention_layer_end 26 \
+                 --save_ckpt_log_name llama3_prune \
+                 --pruner_type taylor --taylor param_first \
+                 --max_seq_len 128 \
+                 --test_after_train --test_before_train --save_model 
+```
+Note that many dataset scripts are not available anymore on HuggingFace due to licensing issues.
+Results are worse than the paper because of the adjusted pruning layers.
+
 ## Step-by-step Instructions  
     
 It takes three steps to prune an LLM:
